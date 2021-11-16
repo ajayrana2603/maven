@@ -1,0 +1,7 @@
+- name: add group "maven"
+  group:
+    name: maven
+- name: add user "maven"
+  user:
+    name: maven
+    group: maven
