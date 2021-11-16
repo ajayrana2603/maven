@@ -1,0 +1,26 @@
+- name: copy Apache tar file
+  # get_url: url http://mirrors.estointernet.in/apache/tomcat/tomcat-8/v8.5.53/bin/apache-tomcat-8.5.53.tar.gzdest=/opt/apache-tomcat-8.5.53.tar.gz
+  copy:
+    src: apache-maven-3.8.3-bin.tar
+    dest: /tmp
+
+- name: Extract archive
+  shell: /bin/tar xvf /tmp/apache-maven-3.8.3-bin.tar -C /opt
+
+- name: create Symlink
+  file:
+    src: /opt/apache-maven-3.8.3-bin.tar
+    path: /opt/maven
+    owner: maven
+    group: maven
+    state: link
+
+- name: Change ownership of Maven installation
+  file:
+    path: /opt/maven/
+    owner: maven
+    group: maven
+    mode: 0755
+    state: directory
+    recurse: yes
+

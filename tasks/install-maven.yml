@@ -1,26 +1,30 @@
-- name: copy Apache tar file
-  # get_url: url http://mirrors.estointernet.in/apache/tomcat/tomcat-8/v8.5.53/bin/apache-tomcat-8.5.53.tar.gzdest=/opt/apache-tomcat-8.5.53.tar.gz
-  copy:
-    src: apache-maven-3.8.3-bin.tar
-    dest: /tmp
+- hosts: web
+  become: yes
+  tasks:
+   - name: Install Java 1.8
+     apt:     ## apt-get install openjdk-8-jdk -y
+      name: openjdk-8-jdk
+      state: present
 
-- name: Extract archive
-  shell: /bin/tar xvf /tmp/apache-maven-3.8.3-bin.tar -C /opt
+   - name: add group "maven"
+     group:  ## groupadd maven
+       name: maven
 
-- name: create Symlink
-  file:
-    src: /opt/apache-maven-3.8.3-bin.tar
-    path: /opt/maven
-    owner: maven
-    group: maven
-    state: link
+   - name: add user "maven"
+     user:  ## useradd maven -G maven
+      name: maven
+      group: maven
+      createhome: no
 
-- name: Change ownership of Maven installation
-  file:
-    path: /opt/maven/
-    owner: maven
-    group: maven
-    mode: 0755
-    state: directory
-    recurse: yes
+   - name: Download Maven
+     get_url:  ### wget url -O /tmp/tomca.tgz
+       url: https://dlcdn.apache.org/maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.tar.gz
+       dest: /tmp/apache-maven-3.8.3-bin.tar.gz
 
+   - name: Extract archive
+     unarchive:  ## tar -xzf tarfile ## by default source is always controller
+        src: /tmp/apache-maven-3.8.3-bin.tar.gz
+        dest: /opt
+        remote_src: yes
+
+   
